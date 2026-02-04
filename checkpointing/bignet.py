@@ -20,7 +20,8 @@ class BigNet(torch.nn.Module):
 
         def forward(self, x):
             from torch.utils.checkpoint import checkpoint
-            return self.transformer_layer(x)
+            # return self.transformer_layer(x)
+            return checkpoint(self.transformer_layer, x, use_reentrant=False)
         
     def __init__(self, input_size=4096, hidden_size=2048, output_size=10, device="mps"):
         super().__init__()
@@ -85,7 +86,7 @@ def train_step(model, batch_size=1, seq_len=1024):
 
 
 if __name__ == "__main__":
-    batch_size, seq_len = 4, 1024
+    batch_size, seq_len = 8, 1024
     model = BigNet(device="mps")
 
     # test_forward(model, batch_size=batch_size, seq_len=seq_len)
